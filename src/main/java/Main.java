@@ -11,17 +11,21 @@ import java.util.concurrent.TimeUnit;
 
 public class Main {
     public static void main(String[] args) {
-        System.setProperty("webdriver.chrome.driver", "C:\\temp2\\mike\\artiftest1\\drivers\\chromedriver.exe");
-        ChromeOptions options = new ChromeOptions();
-        options.addArguments("--disable-gpu");
+//        System.setProperty("webdriver.chrome.driver", "C:\\temp2\\mike\\artiftest1\\drivers\\chromedriver.exe");
+        System.setProperty("webdriver.chrome.driver", "D:\\JavaProjects\\artiftest1\\drivers\\chromedriver.exe");
 
-        WebDriver driver = new ChromeDriver(options);
+        WebDriver driver = new ChromeDriver();
         Actions actions = new Actions(driver);
-        driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
+        driver.manage().timeouts().implicitlyWait(5, TimeUnit.SECONDS);
 
 //        priceTest(driver);
-        popupBypass(driver, actions);
 //        someTests(driver);
+
+//        popupBypass(driver, actions);
+        List<String> list = new ArrayList<>();
+        list.add("https://www.ulmart.ru/catalog/amortizatory_i_komplektuusie_1");
+        fillProducts(list);
+
         int k = 44;
     }
 
@@ -48,7 +52,7 @@ public class Main {
     }
 
     //Hover test
-    public static int popupBypass(WebDriver driver, Actions actions) {
+    public static List<String> popupBypass(WebDriver driver, Actions actions) {
         List<String> urlList = new ArrayList<>();
         List<String> finalUrlList = new ArrayList<>();
 
@@ -68,7 +72,7 @@ public class Main {
         }
         //После выполнения предыдущего кода имеется список корневых элементов, которые передаются в рекурсивную функцию в дальнейшем
         for (int i = 0; i < urlList.size(); i++) {
-            finalUrlList.addAll(searchProductList(driver, urlList.get(i)));
+            finalUrlList.addAll(searchProductList(urlList.get(i)));
         }
 
         //Этап финальных страниц-агрегаторов
@@ -83,27 +87,38 @@ public class Main {
         // Этап страниц со списками товаров
 
 
-        return elements.size();
+        return finalUrlList;
     }
 
     //Рекурсивный метод для поиска финальных URL, содержащих списки товаров
-    public static List<String> searchProductList(WebDriver driver, String parentURL) {
+    public static List<String> searchProductList(String parentURL) {
         List<String> resultList = new ArrayList<>();
+
+        WebDriver driver = new ChromeDriver();
+        driver.manage().timeouts().implicitlyWait(5, TimeUnit.SECONDS);
 
         driver.get(parentURL);
         List<WebElement> list = driver.findElements(By.xpath("//section[@class='b-product b-product_theme_normal b-box box_theme_normal b-box_hoverable b-product_list-item-w-foto  double-hover-wrap  js-fly']"));
 
         if (list.size() > 0) {
+            System.out.println("Ulmart: " + parentURL);
             resultList.add(parentURL);
+            driver.quit();
             return resultList;
         }
 
         list = driver.findElements(By.xpath("//section[@class='h-sect-margin1-bottom']//li[@class='b-list__item b-list__item_bigger ']"));
 
         for (WebElement element : list) {
-            resultList.addAll(searchProductList(driver, element.findElement(By.xpath(".//a")).getAttribute("href")));
+            resultList.addAll(searchProductList(element.findElement(By.xpath(".//a")).getAttribute("href")));
         }
 
+        driver.quit();
         return resultList;
+    }
+
+    //Создание объектов класса Product и заполнениеих полей названиями, ценами и артикулами товаров
+    public static List<Product> fillProducts(List<String> urls) {
+
     }
 }
