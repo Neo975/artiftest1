@@ -9,10 +9,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-public class Main {
+public class MainUlmart {
     public static void main(String[] args) {
 //        System.setProperty("webdriver.chrome.driver", "C:\\temp2\\mike\\artiftest1\\drivers\\chromedriver.exe");
-        System.setProperty("webdriver.chrome.driver", "D:\\JavaProjects\\artiftest1\\drivers\\chromedriver.exe");
+        System.setProperty("webdriver.chrome.driver", "D:\\JavaProjects\\Crawler_Citilink\\drivers\\chromedriver.exe");
 
         WebDriver driver = new ChromeDriver();
         Actions actions = new Actions(driver);
@@ -56,7 +56,7 @@ public class Main {
         List<String> urlList = new ArrayList<>();
         List<String> finalUrlList = new ArrayList<>();
 
-        driver.get("https://www.ulmart.ru");
+        driver.get("https://www.citilink.ru/catalog");
         WebElement elementMenu = driver.findElement(By.xpath("//div[@id='b-dropdown-catalog-menu']"));
         actions.moveToElement(elementMenu).perform();
         WebElement elementList = driver.findElement(By.xpath("//ul[@class='b-list b-list_theme_normal b-list_catalog-menu']"));
@@ -119,6 +119,6 @@ public class Main {
 
     //Создание объектов класса Product и заполнениеих полей названиями, ценами и артикулами товаров
     public static List<Product> fillProducts(List<String> urls) {
-
+        return null;
     }
 }
