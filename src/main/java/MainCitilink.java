@@ -11,13 +11,14 @@ import java.util.concurrent.TimeUnit;
 
 public class MainCitilink {
     public static void main(String[] args) {
-        System.setProperty("webdriver.chrome.driver", "D:\\JavaProjects\\Crawler_Ulmart\\drivers\\chromedriver.exe");
+//        System.setProperty("webdriver.chrome.driver", "D:\\JavaProjects\\Crawler_Ulmart\\drivers\\chromedriver.exe");
+        System.setProperty("webdriver.chrome.driver", "C:\\temp2\\mike\\JavaProjects\\Crawler_Citilink\\drivers\\chromedriver.exe");
 
         WebDriver driver = new ChromeDriver();
 //        Actions actions = new Actions(driver);
         driver.manage().timeouts().implicitlyWait(5, TimeUnit.SECONDS);
 
-        test(driver);
+        test2(driver);
         driver.quit();
     }
 
@@ -37,11 +38,7 @@ public class MainCitilink {
     }
 
     public static void test2(WebDriver driver) {
-        List<String> finalList = findFinalURLS("https://www.citilink.ru/catalog/mobile/tablet_pc_aks/");
-
-        for (String finalURL : finalList) {
-            System.out.println("FINAL:   " + finalURL);
-        }
+        List<Product> list = parseItems("https://www.citilink.ru/catalog/mobile/ultrabuki/");
 
         int k = 44;
     }
@@ -99,14 +96,22 @@ public class MainCitilink {
         //Создаем объекты класса Product, забиваем туда description, price и т.д.
         //Все помещаем в список res
         //..
+        for (WebElement element : list) {
+            String jsonParams = element.getAttribute("data-params");
+            Product product = new Product(jsonParams);
+            res.add(product);
+        }
 
         //Осуществляем пэйджинацию, при необходимости
-        WebElement page = driver.findElement(By.xpath("//div[@class='page_listing'][1]//link[@rel='next']"));
-        if (page == null) {
+        List<WebElement> pages = driver.findElements(By.xpath("//div[@class='page_listing'][1]//link[@rel='next']"));
+        if (pages.size() == 0) {
+            driver.quit();
+
             return res;
         }
 
-        res.addAll(parseItems(page.getAttribute("href")));
+        res.addAll(parseItems(pages.get(0).getAttribute("href")));
+        driver.quit();
 
         return res;
     }

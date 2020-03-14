@@ -9,6 +9,10 @@ public class Product {
         this.article = article;
     }
 
+    public Product(String json) {
+
+    }
+
     public String getDescription() {
         return description;
     }
